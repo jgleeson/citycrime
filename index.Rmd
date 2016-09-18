@@ -1,0 +1,66 @@
+---
+title: Are big cities more dangerous? City size and homicide rates in the US over
+  time
+author: "James Gleeson"
+date: "18 September 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Big cities are often associated with higher crime rates, in both the popular imagination and the academic literature. In urban economics the key text on crime and city size is Ed Glaeser and Bruce Sacerdote's 1999 paper ['Why is there more crime in cities?'](http://web.mit.edu/~cwuz/Public/14.33/glaeser%20sacerdote%201999.PDF), which documented a systematic link between crime and city size (based on data from the 1980s) and suggested a number of contributory factors including single-mother households. 
+
+More recently, the resurgence of population growth (especially of young adults) in the centres of some large US cities has prompted fresh analysis of whether the old relationship still holds. For example, [Victor Couture and Jessie Handbury](http://faculty.haas.berkeley.edu/couture/download/Couture_Handbury_Revival.pdf) find some (inconclusive) evidence of a link between falling city-centre crime rates and rising graduate populations, while [Ellen et al](https://www.philadelphiafed.org/-/media/community-development/events/2016/research-symposium-on-gentrification/pdfs/panel1_ingridgouldellen.pdf?la=en) find that falling city-centre crime leads to substantial growth in the influx of high-income people.
+
+Research in this area has long been hampered by the difficulty of gathering comprehensive and comparable data on crime from the fragmentary US policing and criminal justice systems. But in August of this year the Marshall Project [made available the results](https://github.com/themarshallproject/city-crime) of an immense effort to create a database of crime rates for 68 major cities between 1975 and 2014. Suddenly it is much easier to answer important questions such as whether big cities are more or less safe - which is exactly what the following analysis does. 
+
+### Loading the necessary R packages
+The analysis carried out in R and requires several packages, as follows.
+
+```{r packages, warning=FALSE}
+library(RCurl) # for grabbing data
+library(ggplot2) # for plot
+library(ggthemes) # for plot themes
+library(dplyr) # for summarising
+```
+
+### Importing the data
+The Marshall Project have made it incredibly easy to access and work with their data.
+```{r}
+x <- getURL("https://raw.githubusercontent.com/themarshallproject/city-crime/master/data/ucr_crime_1975_2015.csv")
+crime <- read.csv(text = x) # Import data
+crime <- crime[,1:15] # Delete extraneous columns
+cf <- crime[complete.cases(crime),] # Filter out incomplete records
+```
+
+### Homicide rate plot
+The first thing we can look at is the simple correlation over time between (logged) population and the homicide rate.
+
+```{r homicide correlation}
+# Calculate the log population
+cf$logpop <- log10(cf$total_pop)
+
+# Calculate correlation of log10 population and homicide rate by year
+cor <- cf %>%
+  group_by(year) %>%
+  summarise(correlation = cor(logpop, homs_per_100k))
+```
+```{r, echo=FALSE}
+plot(cor)
+```
+
+Here's a more complex plot of the relationship between city size and homicide rate in each year.
+```{r homicide plot}
+# Plot homicide rate by city size by year
+p <- ggplot(cf, aes(total_pop, homs_per_100k)) + 
+  geom_point(colour="red", alpha=0.5, aes(size=total_pop)) +
+  geom_smooth(method = "lm", se = FALSE) + 
+  scale_x_log10(breaks = c(1e+05,1e+06,1e+07), labels = c("100k", "1m", "10m")) +
+  facet_wrap(~ year) +
+  labs(title = "US city population and homicide rates, 1975-2014",
+       x = "City population", y = "Homicide rate per 100,000 population")
+p + theme_minimal() + theme(panel.margin=unit(1, "lines")) +
+  theme(legend.title=element_blank())
+```
