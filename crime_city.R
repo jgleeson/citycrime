@@ -1,3 +1,5 @@
+# Analysis of the trend in homicide rates for US cities 
+
 library(ggplot2)
 library(RCurl)
 library(dplyr)
