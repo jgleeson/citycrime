@@ -2,7 +2,7 @@
 title: Are big cities more dangerous? City size and homicide rates in the US over
   time
 author: "James Gleeson"
-date: "18 September 2016"
+date: "January 2019"
 output: html_document
 ---
 
@@ -14,16 +14,15 @@ Big cities are often associated with higher crime rates, in both the popular ima
 
 More recently, the resurgence of population growth (especially of young adults) in the centres of some large US cities has prompted fresh analysis of whether the old relationship still holds. For example, [Victor Couture and Jessie Handbury](http://faculty.haas.berkeley.edu/couture/download/Couture_Handbury_Revival.pdf) find some (inconclusive) evidence of a link between falling city-centre crime rates and rising graduate populations, while [Ellen et al](https://www.philadelphiafed.org/-/media/community-development/events/2016/research-symposium-on-gentrification/pdfs/panel1_ingridgouldellen.pdf?la=en) find that falling city-centre crime leads to substantial growth in the influx of high-income people.
 
-Research in this area has long been hampered by the difficulty of gathering comprehensive and comparable data on crime from the fragmentary US policing and criminal justice systems. But in August of this year the Marshall Project [made available the results](https://github.com/themarshallproject/city-crime) of an immense effort to create a database of crime rates for 68 major cities between 1975 and 2014. Suddenly it is much easier to answer important questions such as whether big cities are more or less safe - which is exactly what the following analysis does. 
+Research in this area has long been hampered by the difficulty of gathering comprehensive and comparable data on crime from the fragmentary US policing and criminal justice systems. But in 2016 the Marshall Project [made available the results](https://github.com/themarshallproject/city-crime) of an immense effort to create a database of crime rates for 68 major cities between 1975 and 2014. Suddenly it is much easier to answer important questions such as whether big cities are more or less safe - which is exactly what the following analysis does. 
 
 ### Loading the necessary R packages
 The analysis carried out in R and requires several packages, as follows.
 
-```{r packages, warning=FALSE}
+```{r packages, warning=FALSE, message=FALSE}
 library(RCurl) # for grabbing data
-library(ggplot2) # for plot
+library(tidyverse) # for data manipulation and plotting
 library(ggthemes) # for plot themes
-library(dplyr) # for summarising
 ```
 
 ### Importing the data
@@ -52,7 +51,7 @@ plot(cor)
 ```
 
 Here's a more complex plot of the relationship between city size and homicide rate in each year.
-```{r homicide plot}
+```{r homicide plot, fig.width=14, fig.height=12}
 # Plot homicide rate by city size by year
 p <- ggplot(cf, aes(total_pop, homs_per_100k)) + 
   geom_point(colour="red", alpha=0.5, aes(size=total_pop)) +
