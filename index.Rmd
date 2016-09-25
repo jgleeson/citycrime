@@ -19,7 +19,7 @@ Research in this area has long been hampered by the difficulty of gathering comp
 ### Loading the necessary R packages
 The analysis carried out in R and requires several packages, as follows.
 
-```{r packages, warning=FALSE}
+```{r packages, warning=FALSE, message=FALSE}
 library(RCurl) # for grabbing data
 library(ggplot2) # for plot
 library(ggthemes) # for plot themes
@@ -52,7 +52,7 @@ plot(cor)
 ```
 
 Here's a more complex plot of the relationship between city size and homicide rate in each year.
-```{r homicide plot}
+```{r homicide plot, fig.width=14, fig.height=12}
 # Plot homicide rate by city size by year
 p <- ggplot(cf, aes(total_pop, homs_per_100k)) + 
   geom_point(colour="red", alpha=0.5, aes(size=total_pop)) +
