@@ -26,7 +26,7 @@ library(ggthemes) # for plot themes
 ```
 
 ### Importing the data
-The Marshall Project have made it incredibly easy to access and work with their data.
+The Marshall Project made it very easy to access and work with their data.
 ```{r}
 x <- getURL("https://raw.githubusercontent.com/themarshallproject/city-crime/master/data/ucr_crime_1975_2015.csv")
 crime <- read.csv(text = x) # Import data
